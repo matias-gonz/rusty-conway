@@ -1,3 +1,5 @@
+pub mod conway;
+
 use macroquad::prelude::*;
 
 #[macroquad::main("Rusty Conway")]
