@@ -7,7 +7,7 @@ jobs:
     name: Rust project
     runs-on: ubuntu-latest
     steps:
-      run: apt install pkg-config libx11-dev libxi-dev libgl1-mesa-dev libasound2-dev
+      - run: apt install pkg-config libx11-dev libxi-dev libgl1-mesa-dev libasound2-dev
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
         with:
