@@ -27,5 +27,12 @@ mod tests {
         let empty_grid = get_empty_grid(1);
         assert_eq!(empty_grid,conway::tick(&grid_one_cell));
     }
+
+    #[test]
+    fn two_cells_should_die() {
+        let grid_one_cell = SparseBinMat::new(2,vec![vec![0],vec![0]]);
+        let empty_grid = get_empty_grid(2);
+        assert_eq!(empty_grid,conway::tick(&grid_one_cell));
+    }
 }
 
