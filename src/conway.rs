@@ -8,7 +8,7 @@ pub fn tick(grid: &SparseBinMat) -> SparseBinMat{
     for i in 0..n {
         for j in 0..n {
             let cell = grid.get(i, j).unwrap();
-            match is_alive(cell) {
+            match cell_is_alive(cell) {
                 true => {}
                 false => {}
             }
@@ -17,14 +17,36 @@ pub fn tick(grid: &SparseBinMat) -> SparseBinMat{
     new_grid
 }
 
-fn is_alive(cell: BinNum) -> bool {
+fn cell_is_alive(cell: BinNum) -> bool {
     cell.is_one()
+}
+
+fn cell_is_underpopulated(cell: BinNum, grid: SparseBinMat) -> bool {
+    true
+}
+
+fn cell_alive_neighbours(x: usize, y: usize, grid: SparseBinMat) -> usize{
+    let mut count = 0;
+    for i in 0 ..= 2{
+        for j in 0 ..= 2{
+            if x + i == 0 || y + j == 0 { continue }
+            let cell = grid.get(x+i-1, y+j-1);
+            match cell {
+                None => {},
+                Some(c) => {
+                    if cell_is_alive(c) { count += 1}
+                }
+            }
+        }
+    }
+    if cell_is_alive(grid.get(x,y).unwrap()) { count -= 1}
+    count
 }
 
 
 #[cfg(test)]
 mod tests {
-    use crate::conway::{self, is_alive};
+    use crate::conway::{self, cell_is_alive, cell_alive_neighbours};
     use sparse_bin_mat::SparseBinMat;
     
     fn get_empty_grid(n: usize) -> SparseBinMat {
@@ -54,7 +76,41 @@ mod tests {
     #[test]
     fn cell_is_alive_when_it_is_one() {
         let cell = SparseBinMat::new(1,vec![vec![0]]).get(0,0).unwrap();
-        assert!(is_alive(cell));
+        assert!(cell_is_alive(cell));
+    }
+
+    #[test]
+    fn cell_has_no_alive_neighbours_when_it_is_the_only_in_the_grid() {
+        let grid = SparseBinMat::new(1,vec![vec![0]]);
+        assert_eq!(cell_alive_neighbours(0,0,grid), 0);
+    }
+
+    #[test]
+    fn cell_has_no_alive_neighbours_when_it_is_far_from_others() {
+        let rows = vec![vec![0,1,2,3,4],vec![0,4],vec![0,2,4],vec![0,4],vec![0,1,2,3,4]];
+        let grid = SparseBinMat::new(5,rows);
+        assert_eq!(cell_alive_neighbours(2,2,grid), 0);
+    }
+
+    #[test]
+    fn cell_has_one_alive_neighbour() {
+        let rows = vec![vec![1],vec![1],vec![]];
+        let grid = SparseBinMat::new(3,rows);
+        assert_eq!(cell_alive_neighbours(1,1,grid), 1);
+    }
+    
+    #[test]
+    fn cell_has_two_alive_neighbours() {
+        let rows = vec![vec![0,1,2,3,4],vec![0,4],vec![0,2,4],vec![0,4],vec![0,1,2,3,4]];
+        let grid = SparseBinMat::new(5,rows);
+        assert_eq!(cell_alive_neighbours(0,0,grid), 2);
+    }
+
+    #[test]
+    fn cell_has_six_alive_neighbours() {
+        let rows = vec![vec![0,1,2,3,4],vec![0,4],vec![0,2,4],vec![0,4],vec![0,1,2,3,4]];
+        let grid = SparseBinMat::new(5,rows);
+        assert_eq!(cell_alive_neighbours(1,1,grid), 6);
     }
 }
 
