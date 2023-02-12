@@ -108,6 +108,15 @@ mod tests {
     }
 
     #[test]
+    fn three_cell_strip_should_rotate() {
+        let rows = vec![vec![],vec![],vec![1,2,3],vec![],vec![]];
+        let grid = SparseBinMat::new(5,rows);
+        let updated_rows = vec![vec![],vec![2],vec![2],vec![2],vec![]];
+        let updated_grid = SparseBinMat::new(5, updated_rows);
+        assert_eq!(updated_grid, tick(&grid));
+    }
+
+    #[test]
     fn cell_is_alive_when_it_is_one() {
         let cell = SparseBinMat::new(1,vec![vec![0]]).get(0,0).unwrap();
         assert!(cell_is_alive(cell));
