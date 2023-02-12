@@ -1,5 +1,4 @@
 use sparse_bin_mat::SparseBinMat;
-use sparse_bin_mat::BinNum;
 
 pub fn tick(grid: &SparseBinMat) -> SparseBinMat{
     let n = grid.number_of_rows();
@@ -38,14 +37,6 @@ pub fn cell_is_alive(i: usize, j: usize, grid: &SparseBinMat) -> bool {
             c.is_one()
         }
     }
-}
-
-fn cell_is_underpopulated(x: usize, y: usize, grid: &SparseBinMat) -> bool {
-    cell_alive_neighbour_count(x, y, grid) < 2
-}
-
-fn cell_is_overpopulated(x: usize, y: usize, grid: &SparseBinMat) -> bool {
-    cell_alive_neighbour_count(x, y, grid) > 3
 }
 
 fn cell_can_reproduce(x: usize, y: usize, grid: &SparseBinMat) -> bool {
@@ -152,41 +143,6 @@ mod tests {
         let rows = vec![vec![0,1,2,3,4],vec![0,4],vec![0,2,4],vec![0,4],vec![0,1,2,3,4]];
         let grid = SparseBinMat::new(5,rows);
         assert_eq!(cell_alive_neighbour_count(1,1,&grid), 6);
-    }
-
-    #[test]
-    fn cell_is_underpopulated_when_it_has_one_neighbour() {
-        let rows = vec![vec![1],vec![1],vec![]];
-        let grid = SparseBinMat::new(3,rows);
-        assert!(cell_is_underpopulated(1,1,&grid));
-    }
-
-    #[test]
-    fn cell_is_underpopulated_when_it_has_no_neighbours() {
-        let rows = vec![vec![0,1,2,3,4],vec![0,4],vec![0,2,4],vec![0,4],vec![0,1,2,3,4]];
-        let grid = SparseBinMat::new(5,rows);
-        assert!(cell_is_underpopulated(2,2,&grid));
-    }
-
-    #[test]
-    fn cell_is_not_underpopulated_when_it_has_two_neighbours() {
-        let rows = vec![vec![0,1,2,3,4],vec![0,4],vec![0,2,4],vec![0,4],vec![0,1,2,3,4]];
-        let grid = SparseBinMat::new(5,rows);
-        assert!(!cell_is_underpopulated(0,0,&grid));
-    }
-
-    #[test]
-    fn cell_is_not_overpopulated_when_it_has_two_alive_neighbours() {
-        let rows = vec![vec![0,1,2,3,4],vec![0,4],vec![0,2,4],vec![0,4],vec![0,1,2,3,4]];
-        let grid = SparseBinMat::new(5,rows);
-        assert!(!cell_is_overpopulated(0,0,&grid));
-    }
-
-    #[test]
-    fn cell_is_overpopulated_when_it_has_six_alive_neighbours() {
-        let rows = vec![vec![0,1,2,3,4],vec![0,4],vec![0,2,4],vec![0,4],vec![0,1,2,3,4]];
-        let grid = SparseBinMat::new(5,rows);
-        assert!(cell_is_overpopulated(1,1,&grid));
     }
 
     #[test]
