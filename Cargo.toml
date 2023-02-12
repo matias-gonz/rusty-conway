@@ -7,4 +7,5 @@ edition = "2021"
 
 [dependencies]
 macroquad = "0.3"
+rand = "0.8.5"
 sparse-bin-mat = "0.7"
