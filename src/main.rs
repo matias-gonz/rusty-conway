@@ -1,18 +1,21 @@
 pub mod conway;
 
-use macroquad::prelude::*;
+use std::{thread::{sleep}, time::Duration};
+
+use sparse_bin_mat::SparseBinMat;
+
+pub mod view;
 
 #[macroquad::main("Rusty Conway")]
 async fn main() {
+    let n = 5;
+    
+    let rows = vec![vec![0,1,2,3,4],vec![0,4],vec![0,2,4],vec![0,4],vec![0,1,2,3,4]];
+    let mut grid = SparseBinMat::new(n,rows);
+
     loop {
-        clear_background(RED);
-
-        draw_line(40.0, 40.0, 100.0, 200.0, 15.0, BLUE);
-        draw_rectangle(screen_width() / 2.0 - 60.0, 100.0, 120.0, 60.0, GREEN);
-        draw_circle(screen_width() - 30.0, screen_height() - 30.0, 15.0, YELLOW);
-
-        draw_text("IT WORKS!", 20.0, 20.0, 30.0, DARKGRAY);
-
-        next_frame().await
+        view::draw(n, &grid).await;
+        grid = conway::tick(&grid);
+        sleep(Duration::from_millis(200));
     }
 }

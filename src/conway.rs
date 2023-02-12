@@ -31,7 +31,7 @@ fn get_new_cell(i: usize, j: usize, grid: &SparseBinMat) -> u8 {
     new_cell
 }
 
-fn cell_is_alive(i: usize, j: usize, grid: &SparseBinMat) -> bool {
+pub fn cell_is_alive(i: usize, j: usize, grid: &SparseBinMat) -> bool {
     match grid.get(i, j) {
         None => {false},
         Some(c) => {
