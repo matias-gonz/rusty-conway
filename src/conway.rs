@@ -15,9 +15,8 @@ pub fn tick(grid: &SparseBinMat) -> SparseBinMat{
 }
 
 fn get_new_cell(i: usize, j: usize, grid: &SparseBinMat) -> u8 {
-    let cell: BinNum = grid.get(i, j).unwrap();
     let mut new_cell = 0;
-    match cell_is_alive(cell) {
+    match cell_is_alive(i, j, grid) {
         true => {
             if cell_lives_onto_next_generation(i, j, grid){
                 new_cell = 1;
@@ -32,8 +31,13 @@ fn get_new_cell(i: usize, j: usize, grid: &SparseBinMat) -> u8 {
     new_cell
 }
 
-fn cell_is_alive(cell: BinNum) -> bool {
-    cell.is_one()
+fn cell_is_alive(i: usize, j: usize, grid: &SparseBinMat) -> bool {
+    match grid.get(i, j) {
+        None => {false},
+        Some(c) => {
+            c.is_one()
+        }
+    }
 }
 
 fn cell_is_underpopulated(x: usize, y: usize, grid: &SparseBinMat) -> bool {
@@ -58,16 +62,10 @@ fn cell_alive_neighbour_count(x: usize, y: usize, grid: &SparseBinMat) -> usize{
     for i in 0 ..= 2{
         for j in 0 ..= 2{
             if x + i == 0 || y + j == 0 { continue }
-            let cell = grid.get(x+i-1, y+j-1);
-            match cell {
-                None => {},
-                Some(c) => {
-                    if cell_is_alive(c) { count += 1}
-                }
-            }
+            if cell_is_alive(x+i-1, y+j-1, grid) { count += 1}
         }
     }
-    if cell_is_alive(grid.get(x,y).unwrap()) { count -= 1}
+    if cell_is_alive(x,y,grid) { count -= 1}
     count
 }
 
@@ -118,8 +116,8 @@ mod tests {
 
     #[test]
     fn cell_is_alive_when_it_is_one() {
-        let cell = SparseBinMat::new(1,vec![vec![0]]).get(0,0).unwrap();
-        assert!(cell_is_alive(cell));
+        let grid = SparseBinMat::new(1,vec![vec![0]]);
+        assert!(cell_is_alive(0, 0, &grid));
     }
 
     #[test]
