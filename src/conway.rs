@@ -25,6 +25,10 @@ fn cell_is_underpopulated(x: usize, y: usize, grid: SparseBinMat) -> bool {
     cell_alive_neighbour_count(x, y, grid) < 2
 }
 
+fn cell_is_overpopulated(x: usize, y: usize, grid: SparseBinMat) -> bool {
+    cell_alive_neighbour_count(x, y, grid) > 3
+}
+
 fn cell_alive_neighbour_count(x: usize, y: usize, grid: SparseBinMat) -> usize{
     let mut count = 0;
     for i in 0 ..= 2{
@@ -46,7 +50,7 @@ fn cell_alive_neighbour_count(x: usize, y: usize, grid: SparseBinMat) -> usize{
 
 #[cfg(test)]
 mod tests {
-    use crate::conway::{self, cell_is_alive, cell_alive_neighbour_count, cell_is_underpopulated};
+    use crate::conway::*;
     use sparse_bin_mat::SparseBinMat;
     
     fn get_empty_grid(n: usize) -> SparseBinMat {
@@ -56,21 +60,21 @@ mod tests {
     #[test]
     fn empty_grid_should_stay_empty_after_tick() {
         let grid = get_empty_grid(1);
-        assert_eq!(grid,conway::tick(&grid));
+        assert_eq!(grid,tick(&grid));
     }
 
     #[test]
     fn cell_should_die_when_it_is_alone() {
         let grid_one_cell = SparseBinMat::new(1,vec![vec![0]]);
         let empty_grid = get_empty_grid(1);
-        assert_eq!(empty_grid,conway::tick(&grid_one_cell));
+        assert_eq!(empty_grid,tick(&grid_one_cell));
     }
 
     #[test]
     fn two_cells_should_die() {
         let grid_one_cell = SparseBinMat::new(2,vec![vec![0],vec![0]]);
         let empty_grid = get_empty_grid(2);
-        assert_eq!(empty_grid,conway::tick(&grid_one_cell));
+        assert_eq!(empty_grid,tick(&grid_one_cell));
     }
 
     #[test]
@@ -132,6 +136,20 @@ mod tests {
         let rows = vec![vec![0,1,2,3,4],vec![0,4],vec![0,2,4],vec![0,4],vec![0,1,2,3,4]];
         let grid = SparseBinMat::new(5,rows);
         assert!(!cell_is_underpopulated(0,0,grid));
+    }
+
+    #[test]
+    fn cell_is_not_overpopulated_when_it_has_two_alive_neighbours() {
+        let rows = vec![vec![0,1,2,3,4],vec![0,4],vec![0,2,4],vec![0,4],vec![0,1,2,3,4]];
+        let grid = SparseBinMat::new(5,rows);
+        assert!(!cell_is_overpopulated(0,0,grid));
+    }
+
+    #[test]
+    fn cell_is_overpopulated_when_it_has_six_alive_neighbours() {
+        let rows = vec![vec![0,1,2,3,4],vec![0,4],vec![0,2,4],vec![0,4],vec![0,1,2,3,4]];
+        let grid = SparseBinMat::new(5,rows);
+        assert!(cell_is_overpopulated(1,1,grid));
     }
 }
 
