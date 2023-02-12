@@ -29,6 +29,10 @@ fn cell_is_overpopulated(x: usize, y: usize, grid: SparseBinMat) -> bool {
     cell_alive_neighbour_count(x, y, grid) > 3
 }
 
+fn cell_can_reproduce(x: usize, y: usize, grid: SparseBinMat) -> bool {
+    cell_alive_neighbour_count(x, y, grid) == 3
+}
+
 fn cell_alive_neighbour_count(x: usize, y: usize, grid: SparseBinMat) -> usize{
     let mut count = 0;
     for i in 0 ..= 2{
@@ -150,6 +154,13 @@ mod tests {
         let rows = vec![vec![0,1,2,3,4],vec![0,4],vec![0,2,4],vec![0,4],vec![0,1,2,3,4]];
         let grid = SparseBinMat::new(5,rows);
         assert!(cell_is_overpopulated(1,1,grid));
+    }
+
+    #[test]
+    fn cell_can_reproduce_when_it_has_three_alive_neighbours() {
+        let rows = vec![vec![0,1,2,3,4],vec![0,1,4],vec![0,2,4],vec![0,4],vec![0,1,2,3,4]];
+        let grid = SparseBinMat::new(5,rows);
+        assert!(cell_can_reproduce(0,0,grid));
     }
 }
 
